@@ -274,6 +274,9 @@ def update_recording_to_recent(rec_dir):
 
 def load_meta_info(rec_dir):
     meta_info_path = os.path.join(rec_dir, "info.csv")
+    if not os.path.exists(meta_info_path):
+        meta_info_path = os.path.join(rec_dir, "user_info.csv")
+
     with open(meta_info_path, "r", encoding="utf-8") as csvfile:
         meta_info = csv_utils.read_key_value_file(csvfile)
     return meta_info
@@ -859,8 +862,9 @@ def is_pupil_rec_dir(rec_dir):
         return False
     try:
         meta_info = load_meta_info(rec_dir)
-        meta_info["Recording Name"]  # Test key existence
-    except:
+        # meta_info["Recording Name"]  # Test key existence
+    except Exception as e:
+        print(e)
         logger.error("Could not read info.csv file: Not a valid Pupil recording.")
         return False
     return True

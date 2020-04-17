@@ -117,6 +117,8 @@ def csv_header_annotations():
     )
 
 def load_and_yield_annotations(directory, topic = 'notify'):
+    if not os.path.exists(os.path.join(directory, topic + "_timestamps.npy")):
+        topic = 'annotation'
     try:
         ts_file = os.path.join(directory, topic + "_timestamps.npy")
         data_ts = np.load(ts_file)
