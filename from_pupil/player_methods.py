@@ -20,7 +20,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 import csv_utils
-import cv2
+# import cv2
 import file_methods as fm
 from camera_models import load_intrinsics
 #from version_utils import versionformat, read_rec_version
@@ -864,58 +864,3 @@ def is_pupil_rec_dir(rec_dir):
         logger.error("Could not read info.csv file: Not a valid Pupil recording.")
         return False
     return True
-
-
-def transparent_circle(img, center, radius, color, thickness):
-    center = tuple(map(int, center))
-    rgb = [255 * c for c in color[:3]]  # convert to 0-255 scale for OpenCV
-    alpha = color[-1]
-    radius = int(radius)
-    if thickness > 0:
-        pad = radius + 2 + thickness
-    else:
-        pad = radius + 3
-    roi = (
-        slice(center[1] - pad, center[1] + pad),
-        slice(center[0] - pad, center[0] + pad),
-    )
-
-    try:
-        overlay = img[roi].copy()
-        cv2.circle(img, center, radius, rgb, thickness=thickness, lineType=cv2.LINE_AA)
-        opacity = alpha
-        cv2.addWeighted(
-            src1=img[roi],
-            alpha=opacity,
-            src2=overlay,
-            beta=1.0 - opacity,
-            gamma=0,
-            dst=img[roi],
-        )
-    except:
-        logger.debug(
-            "transparent_circle would have been partially outside of img. Did not draw it."
-        )
-
-
-def transparent_image_overlay(pos, overlay_img, img, alpha):
-    """
-    Overlay one image with another with alpha blending
-    In player this will be used to overlay the eye (as overlay_img) over the world image (img)
-    Arguments:
-        pos: (x,y) position of the top left corner in numpy row,column format from top left corner (numpy coord system)
-        overlay_img: image to overlay
-        img: destination image
-        alpha: 0.0-1.0
-    """
-    roi = (
-        slice(pos[1], pos[1] + overlay_img.shape[0]),
-        slice(pos[0], pos[0] + overlay_img.shape[1]),
-    )
-    try:
-        cv2.addWeighted(overlay_img, alpha, img[roi], 1.0 - alpha, 0, img[roi])
-    except:
-        logger.debug(
-            "transparent_image_overlay was outside of the world image and was not drawn"
-        )
-    pass
