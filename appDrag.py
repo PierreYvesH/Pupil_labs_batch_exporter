@@ -43,6 +43,10 @@ class dragApp(QtWidgets.QWidget):
         self.stack_wait.setAlignment(
             QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter
             )
+        font = self.stack_wait.font()
+        font.setPixelSize(24)
+        font.setBold(True)
+        self.stack_wait.setFont(font)
 
         self.layout().addWidget(
             self.stack, 
@@ -162,7 +166,13 @@ class dragApp(QtWidgets.QWidget):
                     name += '_' + lvl
                 process_recording_annotations(
                     rec, name + '.csv', target, overwrite = True)
-            
+
+        self.stack.setCurrentWidget(self.stack_wait)
+        self.stack_wait.setText('Done! \n Drop another folder here')
+        self.target_path = ''     
+        self.recordings = None
+        self.levels = None
+
 def getTree(path, tree = None):
 
     # Init
