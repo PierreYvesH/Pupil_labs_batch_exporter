@@ -149,7 +149,10 @@ class dragApp(QtWidgets.QWidget):
         for (rec, lvl) in zip(recordings, level):
             name = 'pupil_positions'
             if omit:
-                lvl = lvl[lvl.index('_')+1:]
+                for ix in range(self.tree.topLevelItemCount()):
+                    folder = self.tree.topLevelItem(ix).text(0)
+                    if folder in lvl:
+                        lvl = lvl[len(folder)+1:]
 
             if not group:
                 target = os.path.join(rec, 'exports')
