@@ -107,6 +107,8 @@ def csv_header():
         "confidence",
         "diameter",
         "diameter_3d",
+        "norm_pos_x",
+        "norm_pos_y"
     )
 
 def csv_header_annotations():
@@ -167,9 +169,10 @@ def load_and_yield_data(directory, topic="pupil"):
                 datum = deserialize_msgpack(payload)
 
                 # custom extraction function for pupil data, see below for details
-                eye_id, conf, dia_2d, dia_3d = extract_eyeid_diameters(datum)
+                print(datum)
+                eye_id, conf, dia_2d, dia_3d, pos_x, pos_y = extract_eyeid_diameters(datum)
                 # yield data according to csv_header() sequence
-                yield (eye_id, timestamp, conf, dia_2d, dia_3d)
+                yield (eye_id, timestamp, conf, dia_2d, dia_3d, pos_x, pos_y)
     except FileNotFoundError:
         logger.warning("{} cannot be processed - file does not exist".format(ts_file))
         return
@@ -184,7 +187,9 @@ def extract_eyeid_diameters(pupil_datum):
         pupil_datum["id"],
         pupil_datum["confidence"],
         pupil_datum["diameter"],
-        pupil_datum.get("diameter_3d", 0.0)
+        pupil_datum.get("diameter_3d", 0.0),
+        pupil_datum["norm_pos"][0],
+        pupil_datum["norm_pos"][1]
     )
 
 def extract_eyeid_messages(datum):
