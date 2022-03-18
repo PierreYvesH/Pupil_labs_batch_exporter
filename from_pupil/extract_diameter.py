@@ -95,7 +95,12 @@ def process_recording_annotations(recording, csv_out, out_directory, overwrite=F
         writer = csv.writer(csv_file, dialect=csv.unix_dialect, quoting = csv.QUOTE_NONE)
         writer.writerow(csv_header_annotations())
 
-        extracted_rows = load_and_yield_annotations(recording)
+        # Before v1.9 annotations were in notify, now in annotations
+        # Notify was not created unless calibration was done 
+        extracted_rows = load_and_yield_annotations(recording, topic = 'notify')
+        writer.writerows(extracted_rows)
+        extracted_rows = load_and_yield_annotations(
+            recording, topic = 'annotations')
         writer.writerows(extracted_rows)
     return
 
